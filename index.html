@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohammad Kazem Bahrami — Neuromorphic Computing Researcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:       #050c18;
+      --bg2:      #091525;
+      --bg3:      #0d1e33;
+      --surface:  #0f2540;
+      --border:   #1a3555;
+      --cyan:     #00d4e8;
+      --cyan-dim: #006e7a;
+      --gold:     #e8c547;
+      --text:     #c8dff0;
+      --text-dim: #5a7a99;
+      --white:    #eaf4ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ─── NAVIGATION ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: background 0.4s, border-color 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(5, 12, 24, 0.92);
+      backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text-dim); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 0 3rem;
+      overflow: hidden;
+    }
+    #hero-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0.55;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 900px;
+      animation: fadeUp 1s ease both;
+    }
+    .hero-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--cyan);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block; width: 2rem; height: 1px;
+      background: var(--cyan);
+    }
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      line-height: 1.02;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--cyan);
+    }
+    .hero-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 1.5rem;
+      margin-bottom: 2.5rem;
+      max-width: 560px;
+      line-height: 1.8;
+    }
+    .hero-sub strong { color: var(--text); font-weight: 500; }
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--cyan);
+      color: var(--bg);
+      border: 1px solid var(--cyan);
+    }
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--cyan);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 3rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 0.75rem;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: block; width: 1px; height: 3rem;
+      background: linear-gradient(to bottom, var(--text-dim), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 7rem 3rem; position: relative; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--cyan);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 0 0 2rem; height: 1px;
+      background: var(--cyan-dim);
+    }
+    h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 3rem;
+    }
+    h2 em { font-style: italic; color: var(--cyan); }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ─── ABOUT ─── */
+    #about { background: var(--bg); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--text);
+      line-height: 1.85;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+    .stat-card:hover {
+      border-color: var(--cyan-dim);
+      transform: translateY(-2px);
+    }
+    .stat-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.8rem;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-num span { color: var(--cyan); font-size: 1.6rem; }
+    .stat-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── RESEARCH ─── */
+    #research { background: var(--bg2); }
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .interest-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 2rem 1.75rem;
+      border-radius: 4px;
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .interest-card:hover {
+      border-color: var(--cyan);
+      background: var(--surface);
+      transform: translateY(-3px);
+    }
+    .interest-icon {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+    .interest-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .interest-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ─── PUBLICATION ─── */
+    .pub-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .pub-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan), var(--gold), transparent);
+    }
+    .pub-card:hover { border-color: var(--cyan-dim); }
+    .pub-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(0, 212, 232, 0.1);
+      border: 1px solid var(--cyan-dim);
+      color: var(--cyan);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+      margin-bottom: 1.25rem;
+    }
+    .pub-badge::before { content: '●'; font-size: 0.5rem; }
+    .pub-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.4rem;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+    .pub-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 1.25rem;
+    }
+    .pub-meta strong { color: var(--gold); }
+    .pub-abstract {
+      color: var(--text);
+      font-size: 0.92rem;
+      line-height: 1.75;
+      margin-bottom: 1.75rem;
+      border-left: 2px solid var(--border);
+      padding-left: 1.25rem;
+    }
+    .pub-metrics {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-bottom: 1.75rem;
+    }
+    .pub-metric {
+      display: flex; flex-direction: column;
+    }
+    .pub-metric-val {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.5rem;
+      color: var(--white);
+    }
+    .pub-metric-key {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── EXPERIENCE ─── */
+    #experience { background: var(--bg); }
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute; top: 0; bottom: 0; left: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--cyan), var(--border), transparent);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 2rem;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute; left: -2rem; top: 0.45rem;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    .tl-period {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+    .tl-role {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+    .tl-org {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .tl-desc {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.75;
+      max-width: 640px;
+    }
+
+    /* ─── EDUCATION ─── */
+    #education { background: var(--bg2); }
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .edu-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 2.25rem;
+      border-radius: 4px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .edu-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; width: 3px; bottom: 0;
+      background: var(--cyan);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .edu-card:hover::before { opacity: 1; }
+    .edu-card:hover { border-color: var(--cyan-dim); }
+    .edu-degree {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .edu-uni {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.35rem;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+    .edu-field {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      margin-bottom: 1.25rem;
+    }
+    .edu-details { display: flex; flex-direction: column; gap: 0.4rem; }
+    .edu-detail {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--text);
+      display: flex; gap: 0.5rem;
+    }
+    .edu-detail-key { color: var(--text-dim); min-width: 90px; }
+    .edu-detail-val.highlight { color: var(--gold); font-weight: 500; }
+
+    /* ─── SKILLS ─── */
+    #skills { background: var(--bg); }
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .skills-group { margin-bottom: 2rem; }
+    .skills-group-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--bg2);
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .tag:hover {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+      background: rgba(0, 212, 232, 0.05);
+    }
+    .tag.accent {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+      background: rgba(0, 212, 232, 0.07);
+    }
+
+    /* ─── HONORS ─── */
+    .honors-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .honor-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .honor-item:hover { border-color: var(--cyan-dim); }
+    .honor-item::before {
+      content: '▸';
+      color: var(--cyan);
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--bg2); }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .contact-text p {
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem;
+      text-decoration: none;
+      padding: 1rem 1.25rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      transition: all 0.25s;
+    }
+    .contact-link:hover {
+      border-color: var(--cyan);
+      background: var(--surface);
+      transform: translateX(4px);
+    }
+    .contact-link-icon {
+      width: 2rem; height: 2rem;
+      background: rgba(0, 212, 232, 0.1);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .contact-link-text { display: flex; flex-direction: column; }
+    .contact-link-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .contact-link-val {
+      font-size: 0.88rem;
+      color: var(--white);
+    }
+    .contact-link:hover .contact-link-val { color: var(--cyan); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg);
+    }
+    .footer-left {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    .footer-left strong { color: var(--cyan); }
+    .footer-right {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
+
+    /* ─── REVEAL ON SCROLL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+      #hero { padding: 0 1.5rem; }
+      .about-grid, .edu-grid, .skills-layout, .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .interests-grid { grid-template-columns: 1fr 1fr; }
+      .honors-list { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
+      .scroll-hint { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .interests-grid { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">MK<span>.Bahrami</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-tag">Neuromorphic Computing · Digital Hardware · Spiking Neural Networks</div>
+      <h1>Mohammad Kazem<br><em>Bahrami</em></h1>
+      <p class="hero-sub">
+        M.Sc. Electrical Engineering — Digital Electronic Systems<br>
+        <strong>Shahid Beheshti University</strong> · GPA 19.80/20 (Ranked 1<sup>st</sup>)<br>
+        Published in <strong>Scientific Reports</strong> (Nature Portfolio) · PhD Applicant 2027
+      </p>
+      <div class="hero-cta">
+        <a href="#research" class="btn btn-primary">View Research</a>
+        <a href="https://doi.org/10.1038/s41598-024-54043-7" target="_blank" rel="noopener" class="btn btn-outline">Publication ↗</a>
+        <a href="#contact" class="btn btn-outline">Contact</a>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── ABOUT ─── -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="section-label">About</div>
+      <h2>Building <em>hardware</em> that<br>thinks like a brain</h2>
+      <div class="about-grid reveal">
+        <div class="about-text">
+          <p>
+            I am a researcher at the intersection of computational neuroscience, digital hardware design, and machine learning. My work focuses on spiking neural networks (SNNs) — the third generation of artificial neural networks — and their efficient implementation on FPGA/ASIC platforms.
+          </p>
+          <p>
+            My M.Sc. thesis at Shahid Beheshti University produced a novel bio-inspired learning rule — <em>Spatial-Pow-STDP</em> — and a family of CORDIC-based hardware algorithms that enable unsupervised SNN training on resource-constrained digital hardware, achieving state-of-the-art classification accuracy across MNIST, EMNIST, and CIFAR10.
+          </p>
+          <p>
+            I am currently pursuing PhD opportunities, with a broad interest in neuromorphic systems, intelligent hardware, and bio-inspired computing. I bring two years of full-time research experience, peer-reviewed publications in Nature Portfolio journals, and a strong foundation in both theory and hands-on FPGA implementation.
+          </p>
+        </div>
+        <div class="about-stats">
+          <div class="stat-card">
+            <div class="stat-num">19.80<span>/20</span></div>
+            <div class="stat-label">M.Sc. GPA — Ranked 1st</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">13<span>+</span></div>
+            <div class="stat-label">Citations (2024)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">97.5<span>%</span></div>
+            <div class="stat-label">MNIST Accuracy (SNN)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">7.0</div>
+            <div class="stat-label">IELTS Band Score (C1)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── RESEARCH ─── -->
+  <section id="research">
+    <div class="section-inner">
+      <div class="section-label">Research</div>
+      <h2>Interests &amp; <em>Publication</em></h2>
+
+      <div class="interests-grid reveal">
+        <div class="interest-card">
+          <div class="interest-icon">🧠</div>
+          <div class="interest-title">Neuromorphic Computing</div>
+          <div class="interest-desc">Bio-inspired architectures that mimic cortical dynamics for energy-efficient AI at the hardware level.</div>
+        </div>
+        <div class="interest-card">
+          <div class="interest-icon">⚡</div>
+          <div class="interest-title">Spiking Neural Networks</div>
+          <div class="interest-desc">Third-generation neural networks operating on asynchronous spike trains with biologically plausible plasticity rules.</div>
+        </div>
+        <div class="interest-card">
+          <div class="interest-icon">🔧</div>
+          <div class="interest-title">Digital Design &amp; FPGA/ASIC</div>
+          <div class="interest-desc">VHDL/Verilog implementation of neural hardware; CORDIC arithmetic for multiplier-free DSP and AI inference.</div>
+        </div>
+        <div class="interest-card">
+          <div class="interest-icon">📐</div>
+          <div class="interest-title">VLSI &amp; In-Memory Computing</div>
+          <div class="interest-desc">RRAM-based crossbar architectures and memory-centric computing to eliminate the von Neumann bottleneck.</div>
+        </div>
+        <div class="interest-card">
+          <div class="interest-icon">📷</div>
+          <div class="interest-title">Image Processing</div>
+          <div class="interest-desc">Bio-inspired visual processing pipelines and spike-based image classification with edge and embedded deployments.</div>
+        </div>
+        <div class="interest-card">
+          <div class="interest-icon">🤖</div>
+          <div class="interest-title">Embedded Systems &amp; IoT</div>
+          <div class="interest-desc">Ultra-low-power always-on inference for sensor nodes, edge AI, and intelligent embedded platforms.</div>
+        </div>
+      </div>
+
+      <!-- Publication card -->
+      <div class="pub-card reveal">
+        <div class="pub-badge">Published · Open Access · 2024</div>
+        <div class="pub-title">
+          Digital Design of a Spatial-Pow-STDP Learning Block with High Accuracy Utilizing Pow CORDIC for Large-Scale Image Classifier Spatiotemporal SNN
+        </div>
+        <div class="pub-meta">
+          Mohammad Kazem Bahrami &amp; Soheila Nazari &nbsp;·&nbsp;
+          <strong>Scientific Reports</strong> (Nature Portfolio) · Vol. 14, Article 3388 &nbsp;·&nbsp; 09 Feb 2024
+        </div>
+        <div class="pub-abstract">
+          We introduce Spatial-Pow-STDP, a novel bio-inspired unsupervised learning rule that encodes inter-neuron geometric distance into synaptic weight updates, enabling fast convergence without labelled data. A companion family of CORDIC algorithms (Exp, Ln, Pow) implements the required nonlinear functions using only shift-and-add operations on FPGA — no hardware multipliers needed. The resulting spatiotemporal SNN achieves 97.5% on MNIST, 97.6% on EMNIST Digits, 93.4% on EMNIST Letters, and 93.0% on CIFAR10, setting a new state-of-the-art for unsupervised spiking classifiers with fewer layers and hyperparameters than competing architectures.
+        </div>
+        <div class="pub-metrics">
+          <div class="pub-metric">
+            <span class="pub-metric-val">3,553</span>
+            <span class="pub-metric-key">Accesses</span>
+          </div>
+          <div class="pub-metric">
+            <span class="pub-metric-val">13+</span>
+            <span class="pub-metric-key">Citations</span>
+          </div>
+          <div class="pub-metric">
+            <span class="pub-metric-val">97.5%</span>
+            <span class="pub-metric-key">MNIST Acc.</span>
+          </div>
+          <div class="pub-metric">
+            <span class="pub-metric-val">93.0%</span>
+            <span class="pub-metric-key">CIFAR10 Acc.</span>
+          </div>
+        </div>
+        <a href="https://doi.org/10.1038/s41598-024-54043-7" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:0.75rem;">
+          Read on Nature Portfolio ↗
+        </a>
+      </div>
+
+      <!-- In-progress -->
+      <div class="pub-card reveal" style="margin-top: 1.5rem; opacity: 0.8;">
+        <div class="pub-badge" style="background: rgba(232,197,71,0.1); border-color: rgba(232,197,71,0.3); color: var(--gold);">In Progress</div>
+        <div class="pub-title">
+          Neuromorphic Binary Neural Networks: Bridging SNNs and BNNs for Low-Latency, Efficient Classification
+        </div>
+        <div class="pub-meta">
+          Mohammad Kazem Bahrami, Mohammad Hossein Moaiyeri &amp; Soheila Nazari &nbsp;·&nbsp; <strong>Manuscript in preparation</strong>
+        </div>
+        <div class="pub-abstract">
+          Investigating the convergence of spiking and binary neural network paradigms to push classification efficiency boundaries further on RRAM-based in-memory computing architectures.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── EXPERIENCE ─── -->
+  <section id="experience">
+    <div class="section-inner">
+      <div class="section-label">Experience</div>
+      <h2>Research &amp; <em>Teaching</em></h2>
+      <div class="timeline reveal">
+
+        <div class="tl-item">
+          <div class="tl-period">Feb 2023 — Feb 2025 · Full-time</div>
+          <div class="tl-role">Research Assistant — SNN Hardware Design</div>
+          <div class="tl-org">Shahid Beheshti University · Supervisor: Dr. Soheila Nazari</div>
+          <div class="tl-desc">
+            Led end-to-end design of a spatiotemporal SNN for large-scale image classification. Derived the Spatial-Pow-STDP learning rule from first principles, developed novel CORDIC algorithms for exponential and power-law functions, and implemented the full hardware learning block in VHDL on FPGA. Results published in <em>Scientific Reports</em> (Nature Portfolio, 2024).
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-period">Mar 2024 — Sep 2024 · Part-time</div>
+          <div class="tl-role">Research Assistant — B-SNN RRAM-Based In-Memory Computing</div>
+          <div class="tl-org">Shahid Beheshti University · Supervisor: Dr. Mohammad Hossein Moaiyeri</div>
+          <div class="tl-desc">
+            Investigated binary spiking neural networks implemented on RRAM crossbar arrays for in-memory inference. Explored synapse mapping strategies to eliminate off-chip memory bandwidth and reduce energy per inference. Contributed to manuscript currently in preparation.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-period">Winter 2023</div>
+          <div class="tl-role">Teaching Assistant — ASIC &amp; FPGA Circuits</div>
+          <div class="tl-org">Shahid Beheshti University · Supervisor: Dr. Soheila Nazari</div>
+          <div class="tl-desc">
+            Assisted in course delivery for ASIC and FPGA design, supporting students with VHDL coding, Xilinx toolchain usage (ISE, Vivado), and digital circuit debugging. Developed supplementary lab materials and graded practical assignments.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-period">Summer 2021</div>
+          <div class="tl-role">Engineering Intern — Elevator Control Systems</div>
+          <div class="tl-org">Pars Asmanro Sepand Co. (Pars Control Co.)</div>
+          <div class="tl-desc">
+            Gained practical exposure to embedded control hardware design and production for industrial elevator systems.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── EDUCATION ─── -->
+  <section id="education">
+    <div class="section-inner">
+      <div class="section-label">Education</div>
+      <h2>Academic <em>Background</em></h2>
+      <div class="edu-grid reveal">
+
+        <div class="edu-card">
+          <div class="edu-degree">M.Sc. · 2022 – 2025</div>
+          <div class="edu-uni">Shahid Beheshti University</div>
+          <div class="edu-field">Electrical Engineering — Digital Electronic Systems · Tehran, Iran</div>
+          <div class="edu-details">
+            <div class="edu-detail"><span class="edu-detail-key">GPA</span><span class="edu-detail-val highlight">19.80 / 20.00 (99%)</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Rank</span><span class="edu-detail-val highlight">1st of 18 in cohort</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Thesis</span><span class="edu-detail-val">Hardware Implementation of SNNs for Machine Learning</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Supervisor</span><span class="edu-detail-val">Dr. Soheila Nazari</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Courses</span><span class="edu-detail-val">VHDL, ASIC/FPGA, VLSI, Neural Networks, Deep Learning, Image Processing</span></div>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <div class="edu-degree">B.Sc. · 2017 – 2021</div>
+          <div class="edu-uni">Shahrekord University</div>
+          <div class="edu-field">Electrical Engineering — Electronics · Shahrekord, Iran</div>
+          <div class="edu-details">
+            <div class="edu-detail"><span class="edu-detail-key">GPA</span><span class="edu-detail-val highlight">16.83 / 20.00 (84%)</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Rank</span><span class="edu-detail-val">4th of 33 in cohort</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Project</span><span class="edu-detail-val">Smart Elevators in Smart Homes for IoT Applications</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Supervisor</span><span class="edu-detail-val">Dr. Mohammadali Mohammadi</span></div>
+            <div class="edu-detail"><span class="edu-detail-key">Courses</span><span class="edu-detail-val">Microprocessor, Digital Systems I & II, Signals & Systems, Smart Systems</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Honors -->
+      <div style="margin-top: 3rem;">
+        <div class="section-label" style="margin-bottom: 1.25rem;">Honors &amp; Awards</div>
+        <div class="honors-list reveal">
+          <div class="honor-item">Ranked 1st / 18 — M.Sc. cohort, Shahid Beheshti University</div>
+          <div class="honor-item">Full Tuition Scholarship — M.Sc. program, Shahid Beheshti University</div>
+          <div class="honor-item">Ranked 4th / 33 — B.Sc. cohort, Shahrekord University</div>
+          <div class="honor-item">Full Tuition Scholarship — B.Sc. program, Shahrekord University</div>
+          <div class="honor-item">Top 2% — National University Entrance Exam (200,000+ candidates)</div>
+          <div class="honor-item">Appointed Faculty Representative — Chancellor's Advisory Council</div>
+          <div class="honor-item">Invited Reviewer — International peer-reviewed journals</div>
+          <div class="honor-item">IELTS Academic Band 7.0 (C1) — Listening 8.0, Speaking 7.0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── SKILLS ─── -->
+  <section id="skills">
+    <div class="section-inner">
+      <div class="section-label">Skills</div>
+      <h2>Technical <em>Toolkit</em></h2>
+      <div class="skills-layout reveal">
+        <div>
+          <div class="skills-group">
+            <div class="skills-group-title">Hardware Design Languages</div>
+            <div class="tags">
+              <span class="tag accent">VHDL</span>
+              <span class="tag accent">Verilog</span>
+              <span class="tag">SPICE</span>
+            </div>
+          </div>
+          <div class="skills-group">
+            <div class="skills-group-title">Programming Languages</div>
+            <div class="tags">
+              <span class="tag accent">Python</span>
+              <span class="tag">MATLAB</span>
+              <span class="tag">C / C++</span>
+              <span class="tag">LaTeX</span>
+            </div>
+          </div>
+          <div class="skills-group">
+            <div class="skills-group-title">FPGA / ASIC Tools</div>
+            <div class="tags">
+              <span class="tag accent">Xilinx Vivado</span>
+              <span class="tag accent">Xilinx ISE</span>
+              <span class="tag">Vivado HLS</span>
+              <span class="tag">Cadence Virtuoso</span>
+              <span class="tag">Synopsys HSPICE</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="skills-group">
+            <div class="skills-group-title">Research Domains</div>
+            <div class="tags">
+              <span class="tag accent">Neuromorphic Computing</span>
+              <span class="tag accent">Spiking Neural Networks</span>
+              <span class="tag">CORDIC Arithmetic</span>
+              <span class="tag">STDP / Plasticity Rules</span>
+              <span class="tag">In-Memory Computing</span>
+              <span class="tag">RRAM Crossbars</span>
+              <span class="tag">Image Classification</span>
+            </div>
+          </div>
+          <div class="skills-group">
+            <div class="skills-group-title">Python / ML Stack</div>
+            <div class="tags">
+              <span class="tag">Jupyter Notebook</span>
+              <span class="tag">NumPy / SciPy</span>
+              <span class="tag">PyTorch</span>
+              <span class="tag">MATLAB Simulator</span>
+            </div>
+          </div>
+          <div class="skills-group">
+            <div class="skills-group-title">Languages</div>
+            <div class="tags">
+              <span class="tag accent">English (C1 · IELTS 7.0)</span>
+              <span class="tag">Persian (Native)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="section-label">Contact</div>
+      <h2>Get in <em>Touch</em></h2>
+      <div class="contact-inner reveal">
+        <div class="contact-text">
+          <p>
+            I am actively seeking PhD opportunities for a 2027 start, with broad interests in neuromorphic systems, intelligent hardware, bio-inspired AI, and related fields. If you work in these areas and are looking for a motivated, rigorous researcher, I would be glad to hear from you.
+          </p>
+          <p>
+            I am also open to research collaboration, manuscript review, and academic correspondence.
+          </p>
+          <a href="mailto:mo.ka.bahrami@gmail.com" class="btn btn-primary" style="margin-top: 0.5rem;">Send an Email</a>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:mo.ka.bahrami@gmail.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            <div class="contact-link-text">
+              <span class="contact-link-label">Email</span>
+              <span class="contact-link-val">mo.ka.bahrami@gmail.com</span>
+            </div>
+          </a>
+          <a href="mailto:mohammadk.bahrami@mail.sbu.ac.ir" class="contact-link">
+            <div class="contact-link-icon">🎓</div>
+            <div class="contact-link-text">
+              <span class="contact-link-label">University Email</span>
+              <span class="contact-link-val">mohammadk.bahrami@mail.sbu.ac.ir</span>
+            </div>
+          </a>
+          <a href="https://doi.org/10.1038/s41598-024-54043-7" target="_blank" rel="noopener" class="contact-link">
+            <div class="contact-link-icon">📄</div>
+            <div class="contact-link-text">
+              <span class="contact-link-label">Publication — DOI</span>
+              <span class="contact-link-val">10.1038/s41598-024-54043-7</span>
+            </div>
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" class="contact-link">
+            <div class="contact-link-icon">🔗</div>
+            <div class="contact-link-text">
+              <span class="contact-link-label">LinkedIn</span>
+              <span class="contact-link-val">Mohammad Kazem Bahrami</span>
+            </div>
+          </a>
+          <a href="https://orcid.org" target="_blank" rel="noopener" class="contact-link">
+            <div class="contact-link-icon">◎</div>
+            <div class="contact-link-text">
+              <span class="contact-link-label">ORCID</span>
+              <span class="contact-link-val">View ORCID Profile</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-left">
+      <strong>Mohammad Kazem Bahrami</strong> · Neuromorphic Computing Researcher · Tehran, Iran
+    </div>
+    <div class="footer-right">
+      Built for GitHub Pages · <span id="year"></span>
+    </div>
+  </footer>
+
+  <script>
+    // ─── YEAR ───
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ─── NAV SCROLL ───
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ─── REVEAL ON SCROLL ───
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ─── HERO NEURAL NETWORK CANVAS ───
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let W, H, nodes, animId;
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+      initNodes();
+    }
+
+    function initNodes() {
+      const count = Math.floor((W * H) / 14000);
+      nodes = Array.from({ length: count }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 1,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.02 + Math.random() * 0.03,
+        active: Math.random() < 0.15
+      }));
+    }
+
+    const CONN_DIST = 160;
+    const SPIKE_DIST = 90;
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+
+      // Update
+      nodes.forEach(n => {
+        n.x += n.vx; n.y += n.vy;
+        n.pulse += n.pulseSpeed;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        if (Math.random() < 0.003) n.active = !n.active;
+      });
+
+      // Connections
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const d  = Math.sqrt(dx * dx + dy * dy);
+          if (d < CONN_DIST) {
+            const alpha = (1 - d / CONN_DIST) * 0.18;
+            const isActive = nodes[i].active || nodes[j].active;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = isActive
+              ? `rgba(0, 212, 232, ${alpha * 2.5})`
+              : `rgba(26, 53, 85, ${alpha * 3})`;
+            ctx.lineWidth = isActive ? 0.8 : 0.4;
+            ctx.stroke();
+
+            // Spike particle
+            if (isActive && d < SPIKE_DIST && Math.random() < 0.008) {
+              const px = nodes[i].x + (nodes[j].x - nodes[i].x) * ((t * 0.0005) % 1);
+              const py = nodes[i].y + (nodes[j].y - nodes[i].y) * ((t * 0.0005) % 1);
+              ctx.beginPath();
+              ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(0, 212, 232, 0.9)';
+              ctx.fill();
+            }
+          }
+        }
+      }
+
+      // Nodes
+      nodes.forEach(n => {
+        const glow = n.active ? 0.9 : 0.35;
+        const size = n.r + (n.active ? Math.sin(n.pulse) * 1.2 : 0);
+
+        if (n.active) {
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, size * 5);
+          g.addColorStop(0, `rgba(0, 212, 232, 0.25)`);
+          g.addColorStop(1, `rgba(0, 212, 232, 0)`);
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, size * 5, 0, Math.PI * 2);
+          ctx.fillStyle = g;
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = n.active
+          ? `rgba(0, 212, 232, ${glow})`
+          : `rgba(26, 80, 120, ${glow})`;
+        ctx.fill();
+      });
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(animId);
+      resize();
+      requestAnimationFrame(draw);
+    });
+
+    resize();
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>
