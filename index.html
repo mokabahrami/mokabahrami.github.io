@@ -37,7 +37,7 @@
     "name": "Mohammad Kazem Bahrami",
     "alternateName": ["Moka Bahrami", "M. K. Bahrami"],
     "url": "https://mokabahrami.github.io/",
-    "email": "mo.ka.bahrami@gmail.com",
+    "contactPoint": { "@type": "ContactPoint", "contactType": "academic enquiry", "url": "https://mokabahrami.github.io/#contact" },
     "jobTitle": "Electrical Engineering Researcher",
     "description": "Researcher specialising in neuromorphic computing, spiking neural networks, and FPGA hardware design.",
     "alumniOf": [
@@ -1096,21 +1096,21 @@
           <p>
             I am also open to research collaboration, manuscript review, and academic correspondence.
           </p>
-          <a href="mailto:mo.ka.bahrami@gmail.com" class="btn btn-primary" style="margin-top: 0.5rem;">Send an Email</a>
+          <a href="#contact" class="btn btn-primary em-btn" data-u="mo.ka.bahrami" data-d="gmail.com" style="margin-top: 0.5rem;">Send an Email</a>
         </div>
         <div class="contact-links">
-          <a href="mailto:mo.ka.bahrami@gmail.com" class="contact-link">
+          <a href="#" class="contact-link em-link" data-u="mo.ka.bahrami" data-d="gmail.com">
             <div class="contact-link-icon">✉</div>
             <div class="contact-link-text">
               <span class="contact-link-label">Email</span>
-              <span class="contact-link-val">mo.ka.bahrami@gmail.com</span>
+              <span class="contact-link-val em-display" data-u="mo.ka.bahrami" data-d="gmail.com">—</span>
             </div>
           </a>
-          <a href="mailto:mohammadk.bahrami@mail.sbu.ac.ir" class="contact-link">
+          <a href="#" class="contact-link em-link" data-u="mohammadk.bahrami" data-d="mail.sbu.ac.ir">
             <div class="contact-link-icon">🎓</div>
             <div class="contact-link-text">
               <span class="contact-link-label">University Email</span>
-              <span class="contact-link-val">mohammadk.bahrami@mail.sbu.ac.ir</span>
+              <span class="contact-link-val em-display" data-u="mohammadk.bahrami" data-d="mail.sbu.ac.ir">—</span>
             </div>
           </a>
           <a href="https://doi.org/10.1038/s41598-024-54043-7" target="_blank" rel="noopener" class="contact-link">
@@ -1343,6 +1343,21 @@
 
     resize();
     requestAnimationFrame(draw);
+
+    (function () {
+      function assemble(u, d) { return u + '\u0040' + d; }
+
+      // Mailto links (anchor tags)
+      document.querySelectorAll('a.em-link, a.em-btn').forEach(function (el) {
+        var addr = assemble(el.dataset.u, el.dataset.d);
+        el.href = 'mailto:' + addr;
+      });
+
+      // Display spans
+      document.querySelectorAll('span.em-display').forEach(function (el) {
+        el.textContent = assemble(el.dataset.u, el.dataset.d);
+      });
+    })();
   </script>
 </body>
 </html>
