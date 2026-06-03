@@ -217,7 +217,25 @@
     .hero-sub strong { color: var(--text); font-weight: 500; }
     .hero-cta {
       display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
+    /* Cursor glow */
+    #cursor-glow {
+      position: fixed;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,212,232,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+    /* Card tilt — applied via JS */
+    .tilt-card { transform-style: preserve-3d; will-change: transform; }
+    /* Animated stat counters */
+    .stat-num { transition: color 0.3s; }
+    .stat-num.counting { color: var(--cyan); }
     .btn {
       display: inline-flex; align-items: center; gap: 0.5rem;
       padding: 0.75rem 1.75rem;
@@ -718,6 +736,34 @@
       transform: translateY(0);
     }
 
+    /* ─── HAMBURGER BUTTON ─── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 2.2rem; height: 2.2rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      padding: 0.45rem;
+      z-index: 101;
+      transition: border-color 0.2s;
+    }
+    .nav-hamburger:hover { border-color: var(--cyan); }
+    .nav-hamburger span {
+      display: block;
+      width: 100%; height: 1px;
+      background: var(--text-dim);
+      border-radius: 1px;
+      transition: all 0.3s;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); background: var(--cyan); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); background: var(--cyan); }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
       nav { padding: 1rem 1.5rem; }
@@ -731,9 +777,37 @@
       .scroll-hint { display: none; }
     }
     @media (max-width: 600px) {
-      .nav-links { display: none; }
+      /* Show hamburger, hide inline links */
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 12, 24, 0.97);
+        backdrop-filter: blur(16px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2.25rem;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .nav-links.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .nav-links a {
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+        color: var(--text);
+      }
+      .nav-links a:hover { color: var(--cyan); }
       .interests-grid { grid-template-columns: 1fr; }
       .about-stats { grid-template-columns: 1fr 1fr; }
+      .hero-cta { flex-direction: column; }
+      .hero-cta .btn { text-align: center; justify-content: center; }
     }
   </style>
 </head>
@@ -742,7 +816,7 @@
   <!-- ─── NAV ─── -->
   <nav id="nav">
     <a href="#hero" class="nav-logo">Moka<span>.Bahrami</span></a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#experience">Experience</a></li>
@@ -750,7 +824,12 @@
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <div id="cursor-glow"></div>
 
   <!-- ─── HERO ─── -->
   <section id="hero">
@@ -764,10 +843,11 @@
         <strong>Shahid Beheshti University</strong> · GPA 19.80/20 (Ranked 1<sup>st</sup>)<br>
         Published in <strong>Scientific Reports</strong> (Nature Portfolio) · PhD Applicant 2027
       </p>
+      <!-- Primary CTAs -->
       <div class="hero-cta">
         <a href="#research" class="btn btn-primary">View Research</a>
-        <a href="https://doi.org/10.1038/s41598-024-54043-7" target="_blank" rel="noopener" class="btn btn-outline">Publication ↗</a>
-        <a href="#contact" class="btn btn-outline">Contact</a>
+        <a href="https://scholar.google.com/citations?hl=en&user=nEMvgE0AAAAJ" target="_blank" rel="noopener" class="btn btn-outline">Google Scholar ↗</a>
+        <a href="https://www.linkedin.com/in/moka-bahrami/" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn ↗</a>
       </div>
     </div>
     <div class="scroll-hint">Scroll</div>
@@ -1159,72 +1239,204 @@
       nav.classList.toggle('scrolled', window.scrollY > 40);
     });
 
+    // ─── HAMBURGER MENU ───
+    const hamburger = document.getElementById('nav-hamburger');
+    const navLinks  = document.getElementById('nav-links');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+    // Close menu when any nav link is tapped
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+
     // ─── REVEAL ON SCROLL ───
-    const observer = new IntersectionObserver((entries) => {
+    const revealObs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    // ─── ANIMATED STAT COUNTERS ───
+    function animateCounter(el, target, suffix, duration) {
+      const isDecimal = target % 1 !== 0;
+      const start = performance.now();
+      el.classList.add('counting');
+      function step(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        const val = isDecimal ? (ease * target).toFixed(2) : Math.floor(ease * target);
+        el.innerHTML = val + '<span>' + suffix + '</span>';
+        if (p < 1) requestAnimationFrame(step);
+        else el.classList.remove('counting');
+      }
+      requestAnimationFrame(step);
+    }
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const map = {
+          '19.80/20': [19.80, '/20', 1800],
+          '13+':      [13,    '+',   1200],
+          '97.5%':    [97.5,  '%',   1500],
+          '7.0':      [7.0,   '',    1000]
+        };
+        const key = Object.keys(map).find(k => el.textContent.includes(k.replace(/[+%]/,'')));
+        if (key) { animateCounter(el, map[key][0], map[key][1], map[key][2]); counterObs.unobserve(el); }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.stat-num').forEach(el => counterObs.observe(el));
+
+    // ─── CURSOR GLOW ───
+    const glow = document.getElementById('cursor-glow');
+    let mx = -999, my = -999;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      glow.style.left = mx + 'px';
+      glow.style.top  = my + 'px';
+      glow.style.opacity = '1';
+    });
+    document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+
+    // ─── CARD TILT EFFECT ───
+    document.querySelectorAll('.stat-card, .interest-card, .pub-card, .edu-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r  = card.getBoundingClientRect();
+        const cx = (e.clientX - r.left) / r.width  - 0.5;
+        const cy = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateX(${-cy * 6}deg) rotateY(${cx * 6}deg) translateY(-3px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
 
     // ─── HERO NEURAL NETWORK + SPARKLE CANVAS ───
     const canvas = document.getElementById('hero-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx    = canvas.getContext('2d');
 
-    let W, H, nodes, sparkles, animId;
+    let W, H, nodes, sparkles, shootingStars, animId;
+    let mouseX = -9999, mouseY = -9999;
+
+    canvas.addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      mouseX = e.clientX - r.left;
+      mouseY = e.clientY - r.top;
+    });
+    canvas.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
-      initNodes();
-      initSparkles();
+      initNodes(); initSparkles(); initShootingStars();
     }
 
-    // ── Neural network nodes (denser: divisor 5500 → ~3× more than before)
+    // ── Neural network nodes
     function initNodes() {
       const count = Math.floor((W * H) / 5500);
       nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
+        x: Math.random() * W, y: Math.random() * H,
         vx: (Math.random() - 0.5) * 0.35,
         vy: (Math.random() - 0.5) * 0.35,
         r: Math.random() * 2.2 + 0.8,
         pulse: Math.random() * Math.PI * 2,
         pulseSpeed: 0.018 + Math.random() * 0.035,
-        active: Math.random() < 0.22,        // more active nodes
+        active: Math.random() < 0.22,
         activeCooldown: 0
       }));
     }
 
-    // ── Dedicated sparkle layer: bright twinkling star-like points
+    // ── Sparkle layer — denser (divisor 2200)
     function initSparkles() {
-      const count = Math.floor((W * H) / 3800); // dense sparkle field
+      const count = Math.floor((W * H) / 2200);
       sparkles = Array.from({ length: count }, () => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        size: Math.random() * 1.4 + 0.3,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.025 + Math.random() * 0.055,
-        maxAlpha: 0.25 + Math.random() * 0.65,
-        color: Math.random() < 0.65
-          ? `rgba(0, 212, 232,`      // cyan
-          : Math.random() < 0.5
-            ? `rgba(180, 220, 255,`  // cool white
-            : `rgba(232, 197, 71,`   // gold accent
+        x: Math.random() * W, y: Math.random() * H,
+        size:     Math.random() * 1.6 + 0.25,
+        phase:    Math.random() * Math.PI * 2,
+        speed:    0.02 + Math.random() * 0.06,
+        maxAlpha: 0.2 + Math.random() * 0.75,
+        color: Math.random() < 0.6
+          ? `rgba(0, 212, 232,`
+          : Math.random() < 0.55
+            ? `rgba(190, 225, 255,`
+            : `rgba(232, 197, 71,`
       }));
     }
 
+    // ── Shooting stars
+    function initShootingStars() {
+      shootingStars = [];
+    }
+    function spawnShootingStar() {
+      shootingStars.push({
+        x: Math.random() * W * 0.7,
+        y: Math.random() * H * 0.5,
+        len:   80 + Math.random() * 120,
+        speed: 6 + Math.random() * 8,
+        angle: Math.PI * (0.15 + Math.random() * 0.2),
+        alpha: 0.9,
+        life:  1.0
+      });
+    }
+
     const CONN_DIST  = 175;
-    const SPIKE_DIST = 110;
+    const SPIKE_DIST = 115;
+    const MOUSE_DIST = 130;
 
     function draw(t) {
       ctx.clearRect(0, 0, W, H);
 
-      // ── Update nodes
+      // ── Spawn shooting star occasionally
+      if (Math.random() < 0.003) spawnShootingStar();
+
+      // ── Update & draw shooting stars
+      shootingStars = shootingStars.filter(s => s.life > 0);
+      shootingStars.forEach(s => {
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.life -= 0.018;
+        s.alpha = s.life;
+        const tx = s.x - Math.cos(s.angle) * s.len;
+        const ty = s.y - Math.sin(s.angle) * s.len;
+        const g  = ctx.createLinearGradient(tx, ty, s.x, s.y);
+        g.addColorStop(0, `rgba(0,212,232,0)`);
+        g.addColorStop(0.7, `rgba(0,212,232,${s.alpha * 0.6})`);
+        g.addColorStop(1, `rgba(255,255,255,${s.alpha})`);
+        ctx.beginPath();
+        ctx.moveTo(tx, ty); ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle = g;
+        ctx.lineWidth   = 1.5;
+        ctx.stroke();
+        // bright tip
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+        ctx.fill();
+      });
+
+      // ── Update nodes (with mouse repulsion)
       nodes.forEach(n => {
+        const dx = n.x - mouseX, dy = n.y - mouseY;
+        const md = Math.sqrt(dx * dx + dy * dy);
+        if (md < MOUSE_DIST) {
+          const force = (1 - md / MOUSE_DIST) * 0.8;
+          n.vx += (dx / md) * force * 0.3;
+          n.vy += (dy / md) * force * 0.3;
+        }
+        // dampen velocity
+        n.vx *= 0.995; n.vy *= 0.995;
+        // clamp speed
+        const spd = Math.sqrt(n.vx*n.vx + n.vy*n.vy);
+        if (spd > 1.5) { n.vx = (n.vx/spd)*1.5; n.vy = (n.vy/spd)*1.5; }
+
         n.x += n.vx; n.y += n.vy;
         n.pulse += n.pulseSpeed;
         if (n.x < 0 || n.x > W) n.vx *= -1;
         if (n.y < 0 || n.y > H) n.vy *= -1;
-        // spontaneous firing with refractory period
         if (n.activeCooldown > 0) {
           n.activeCooldown--;
           if (n.activeCooldown === 0) n.active = false;
@@ -1234,12 +1446,12 @@
         }
       });
 
-      // ── Connections between nodes
+      // ── Connections
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
-          const d  = Math.sqrt(dx * dx + dy * dy);
+          const d  = Math.sqrt(dx*dx + dy*dy);
           if (d < CONN_DIST) {
             const alpha    = (1 - d / CONN_DIST) * 0.2;
             const isActive = nodes[i].active || nodes[j].active;
@@ -1247,19 +1459,17 @@
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.strokeStyle = isActive
-              ? `rgba(0, 212, 232, ${alpha * 2.8})`
-              : `rgba(26, 65, 100, ${alpha * 3.2})`;
+              ? `rgba(0,212,232,${alpha * 2.8})`
+              : `rgba(26,65,100,${alpha * 3.2})`;
             ctx.lineWidth = isActive ? 0.85 : 0.45;
             ctx.stroke();
-
-            // Travelling spike particle along active edges
             if (isActive && d < SPIKE_DIST && Math.random() < 0.012) {
-              const progress = (t * 0.00055) % 1;
-              const px = nodes[i].x + (nodes[j].x - nodes[i].x) * progress;
-              const py = nodes[i].y + (nodes[j].y - nodes[i].y) * progress;
+              const p  = (t * 0.00055) % 1;
+              const px = nodes[i].x + (nodes[j].x - nodes[i].x) * p;
+              const py = nodes[i].y + (nodes[j].y - nodes[i].y) * p;
               ctx.beginPath();
               ctx.arc(px, py, 1.8, 0, Math.PI * 2);
-              ctx.fillStyle = 'rgba(0, 230, 255, 0.95)';
+              ctx.fillStyle = 'rgba(0,230,255,0.95)';
               ctx.fill();
             }
           }
@@ -1268,95 +1478,64 @@
 
       // ── Draw nodes
       nodes.forEach(n => {
-        const glow = n.active ? 0.95 : 0.38;
         const size = n.r + (n.active ? Math.sin(n.pulse) * 1.5 : 0);
-
         if (n.active) {
-          // outer halo
           const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, size * 6);
-          g.addColorStop(0, `rgba(0, 212, 232, 0.22)`);
-          g.addColorStop(1, `rgba(0, 212, 232, 0)`);
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, size * 6, 0, Math.PI * 2);
-          ctx.fillStyle = g;
-          ctx.fill();
+          g.addColorStop(0, `rgba(0,212,232,0.22)`);
+          g.addColorStop(1, `rgba(0,212,232,0)`);
+          ctx.beginPath(); ctx.arc(n.x, n.y, size * 6, 0, Math.PI*2);
+          ctx.fillStyle = g; ctx.fill();
         }
-
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, size, 0, Math.PI * 2);
+        ctx.beginPath(); ctx.arc(n.x, n.y, size, 0, Math.PI*2);
         ctx.fillStyle = n.active
-          ? `rgba(0, 212, 232, ${glow})`
-          : `rgba(26, 90, 130, ${glow})`;
+          ? `rgba(0,212,232,${n.active ? 0.95 : 0.38})`
+          : `rgba(26,90,130,0.38)`;
         ctx.fill();
       });
 
-      // ── Sparkle layer (drawn on top of network)
+      // ── Sparkle layer
       sparkles.forEach(s => {
         s.phase += s.speed;
         const alpha = Math.max(0, Math.sin(s.phase) * s.maxAlpha);
         if (alpha < 0.01) return;
-
-        // 4-point star shape for brighter sparkles, circle for dim ones
         if (s.maxAlpha > 0.6 && alpha > 0.25) {
-          ctx.save();
-          ctx.translate(s.x, s.y);
+          ctx.save(); ctx.translate(s.x, s.y);
           ctx.fillStyle = `${s.color}${alpha})`;
           const r = s.size * 1.6;
           ctx.beginPath();
           for (let p = 0; p < 4; p++) {
-            const angle = (p / 4) * Math.PI * 2;
-            const x1 = Math.cos(angle) * r;
-            const y1 = Math.sin(angle) * r;
-            const x2 = Math.cos(angle + Math.PI / 4) * r * 0.3;
-            const y2 = Math.sin(angle + Math.PI / 4) * r * 0.3;
-            if (p === 0) ctx.moveTo(x1, y1); else { ctx.lineTo(x2, y2); ctx.lineTo(x1, y1); }
+            const a1 = (p / 4) * Math.PI * 2;
+            const a2 = a1 + Math.PI / 4;
+            const x1 = Math.cos(a1)*r, y1 = Math.sin(a1)*r;
+            const x2 = Math.cos(a2)*r*0.3, y2 = Math.sin(a2)*r*0.3;
+            p === 0 ? ctx.moveTo(x1,y1) : (ctx.lineTo(x2,y2), ctx.lineTo(x1,y1));
             ctx.lineTo(x2, y2);
           }
-          ctx.closePath();
-          ctx.fill();
-          ctx.restore();
-
-          // glow bloom around bright star
-          const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 5);
-          g.addColorStop(0, `${s.color}${alpha * 0.5})`);
+          ctx.closePath(); ctx.fill(); ctx.restore();
+          const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size*5);
+          g.addColorStop(0, `${s.color}${alpha*0.45})`);
           g.addColorStop(1, `${s.color}0)`);
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.size * 5, 0, Math.PI * 2);
-          ctx.fillStyle = g;
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.size*5, 0, Math.PI*2);
+          ctx.fillStyle = g; ctx.fill();
         } else {
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-          ctx.fillStyle = `${s.color}${alpha})`;
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+          ctx.fillStyle = `${s.color}${alpha})`; ctx.fill();
         }
       });
 
       animId = requestAnimationFrame(draw);
     }
 
-    window.addEventListener('resize', () => {
-      cancelAnimationFrame(animId);
-      resize();
-      requestAnimationFrame(draw);
-    });
-
+    window.addEventListener('resize', () => { cancelAnimationFrame(animId); resize(); requestAnimationFrame(draw); });
     resize();
     requestAnimationFrame(draw);
 
     // ─── EMAIL ASSEMBLY (bot protection) ───
-    // Emails are never in the HTML as plain text.
-    // JS assembles them at runtime — spam bots only read static HTML.
     (function () {
       function assemble(u, d) { return u + '\u0040' + d; }
-
-      // Mailto links (anchor tags)
       document.querySelectorAll('a.em-link, a.em-btn').forEach(function (el) {
-        var addr = assemble(el.dataset.u, el.dataset.d);
-        el.href = 'mailto:' + addr;
+        el.href = 'mailto:' + assemble(el.dataset.u, el.dataset.d);
       });
-
-      // Display spans
       document.querySelectorAll('span.em-display').forEach(function (el) {
         el.textContent = assemble(el.dataset.u, el.dataset.d);
       });
